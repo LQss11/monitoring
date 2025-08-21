@@ -1,0 +1,9 @@
+collectors:
+  enabled: cpu,logical_disk,memory,net,os,physical_disk,service,system
+
+collector:
+  service:
+    include: windows_exporter
+
+log:
+  level: info

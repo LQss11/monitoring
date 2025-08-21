@@ -1,0 +1,21 @@
+version: "3.9"
+name: monitoring
+
+services:
+  node-exporter:
+    image: prom/node-exporter:latest
+    container_name: node-exporter
+    hostname: node-exporter
+    command:
+      - '--path.rootfs=/host'
+    pid: host
+    ports:
+      - "9100:9100"    
+    volumes:
+      - /:/host:ro
+    restart: unless-stopped
+    networks:
+      - monitoring
+networks:
+  monitoring:
+    name: monitoring
