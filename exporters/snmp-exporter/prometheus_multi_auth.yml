@@ -1,0 +1,49 @@
+global:
+  scrape_interval: 15s
+
+scrape_configs:
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+
+  - job_name: 'snmp'
+    metrics_path: /snmp
+
+    # Define targets. Put desired module/auth as labels on each target/group.
+    static_configs:
+      - targets:
+          - 192.168.1.1
+        labels:
+          module: default     # modules defined in snmp_exporter snmp.yml
+          auth: public_v2       # auth profile defined in snmp_exporter snmp.yml
+      # Example extra device with different module/auth:
+      # - targets:
+      #     - 10.0.0.5
+      #   labels:
+      #     module: ucd_la_table
+      #     auth: ops_v3
+
+    # No job-level params here (avoids fan-out/overrides).
+
+    relabel_configs:
+      # Pass the target host to the exporter as ?target=<ip>
+      - source_labels: [__address__]
+        target_label: __param_target
+
+      # Map our per-target labels to exporter query params
+      - source_labels: [module]
+        target_label: __param_module
+      - source_labels: [auth]
+        target_label: __param_auth
+
+      # Keep a friendly instance label
+      - source_labels: [__param_target]
+        target_label: instance
+
+      # Send all scrapes to the snmp_exporter service
+      - target_label: __address__
+        replacement: host.docker.internal:9116
+
+      # Finally, drop the module/auth labels so they don't appear on metrics
+      - action: labeldrop
+        regex: "module|auth"
