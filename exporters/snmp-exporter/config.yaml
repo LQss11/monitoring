@@ -25,4 +25,33 @@ auths:
     priv_password: BLABLA5
     context_name: context
 modules:
-# ....
+  default:
+    walk:
+      - 1.3.6.1.2.1.1     # system (includes sysName)
+      - 1.3.6.1.2.1.2.2   # ifTable
+    metrics:
+      # Scalar: sysName.0 (string exposed as a label on a 1-valued metric)
+      - name: sysName
+        oid: 1.3.6.1.2.1.1.5.0
+        type: DisplayString
+        help: "System name of the device (SNMP sysName)"
+
+      # Interface “info” metric with index and a lookup to attach ifDescr as a label
+      - name: if_info
+        oid: 1.3.6.1.2.1.2.2.1.1   # ifIndex
+        type: gauge
+        help: "Interface index (with ifDescr label via lookup)"
+        indexes:
+          - labelname: ifIndex
+            type: gauge
+        lookups:
+          - labels: [ifIndex]
+            labelname: ifDescr
+            oid: 1.3.6.1.2.1.2.2.1.2  # ifDescr
+            type: DisplayString
+
+      # Optional: export ifDescr itself as a string metric per interface
+      - name: ifDescr
+        oid: 1.3.6.1.2.1.2.2.1.2
+        type: DisplayString
+        help: "Interface description (SNMP ifDescr)"
