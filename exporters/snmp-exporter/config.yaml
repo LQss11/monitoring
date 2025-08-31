@@ -1,0 +1,28 @@
+auths:
+  auth_cisco:
+    version: 2
+    community: BLABLA
+  auth_checkpoint:
+    version: 2
+    community: BLABLA2
+  public_v1:
+    community: public
+    # security_level: noAuthNoPriv
+    version: 1
+    context_name: context
+  # Default
+  public_v2:
+    community: public
+    version: 2    
+    context_name: context
+  auth_viptela:
+    version: 3
+    username: BLABLA3
+    security_level: authPriv
+    password: BLABLA4
+    auth_protocol: SHA 
+    priv_protocol: AES
+    priv_password: BLABLA5
+    context_name: context
+modules:
+# ....

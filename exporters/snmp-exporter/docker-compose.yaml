@@ -1,0 +1,16 @@
+version: "3.9"
+name: monitoring
+
+services:
+  snmp-exporter:
+    image: prom/snmp-exporter:main
+    container_name: snmp-exporter
+    hostname: snmp-exporter
+    ports:
+      - "9116:9116"    
+    restart: unless-stopped
+    networks:
+      - monitoring
+networks:
+  monitoring:
+    name: monitoring
