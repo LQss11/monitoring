@@ -1,0 +1,34 @@
+version: "3.9"
+name: monitoring
+
+services:
+  # SNMP simulator (fake Cisco/other devices)
+  snmpsim:
+    image: tandrup/snmpsim:latest
+    container_name: snmpsim
+    hostname: snmpsim
+    ports:
+      - "1611:161/udp"            # simulator on standard port
+    # volumes:
+    #   - ./snmpsim-data:/usr/local/snmpsim/data
+    # command: "--v2c-arch"
+    restart: unless-stopped
+    networks:
+      - monitoring
+
+  # SNMP daemon (real container stats via Net-SNMP)
+  snmpd:
+    image: polinux/snmpd:latest
+    container_name: snmpd
+    hostname: snmpd
+    ports:
+      - "1162:161/udp"           # SNMP daemon mapped to 1161
+    # volumes:
+    #   - ./snmpd-config/snmpd.conf:/etc/snmp/snmpd.conf:ro
+    restart: unless-stopped
+    networks:
+      - monitoring
+
+networks:
+  monitoring:
+    name: monitoring
